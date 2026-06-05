@@ -1,4 +1,4 @@
-# 🛒 CodeAlpha E-Commerce Store
+# 🛒 ShopNova E-Commerce Store
 
 ![Python](https://img.shields.io/badge/Python-3.x-blue?style=flat&logo=python)
 ![Django](https://img.shields.io/badge/Django-4.2-green?style=flat&logo=django)
