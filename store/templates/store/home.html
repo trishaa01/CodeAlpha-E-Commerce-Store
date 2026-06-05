@@ -1,0 +1,194 @@
+{% extends 'store/base.html' %}
+{% block title %}ShopNova — Discover Amazing Products{% endblock %}
+{% block content %}
+
+<!-- Hero Banner -->
+{% if not query and not category_slug %}
+<section class="hero-gradient text-white relative overflow-hidden">
+  <div class="absolute inset-0 opacity-10">
+    <div class="absolute top-8 left-16 w-64 h-64 bg-white rounded-full blur-3xl"></div>
+    <div class="absolute bottom-4 right-16 w-48 h-48 bg-orange-300 rounded-full blur-3xl"></div>
+  </div>
+  <div class="relative max-w-7xl mx-auto px-4 py-16 flex flex-col md:flex-row items-center gap-8">
+    <div class="flex-1 text-center md:text-left">
+      <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm mb-4">
+        <i class="fas fa-fire text-orange-300"></i> New arrivals every week
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-4">
+        Shop the <span class="text-orange-300">Future</span> Today
+      </h1>
+      <p class="text-lg text-white/80 mb-8 max-w-lg">Discover thousands of products at unbeatable prices. Quality guaranteed.</p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+        <a href="#products" class="bg-white text-indigo-600 font-semibold px-7 py-3 rounded-2xl hover:bg-orange-50 transition-all hover:shadow-lg hover:-translate-y-0.5 text-center">
+          Shop Now <i class="fas fa-arrow-right ml-1"></i>
+        </a>
+        <a href="/cart/" class="border-2 border-white/50 text-white font-semibold px-7 py-3 rounded-2xl hover:bg-white/10 transition-all text-center">
+          View Cart <i class="fas fa-shopping-bag ml-1"></i>
+        </a>
+      </div>
+    </div>
+    <div class="flex gap-4 flex-wrap justify-center">
+      {% for p in featured %}
+      <a href="/product/{{ p.pk }}/" class="glass rounded-2xl p-3 w-36 text-center hover:scale-105 transition-transform shadow-lg">
+        <div class="w-24 h-24 mx-auto rounded-xl overflow-hidden bg-white/30 mb-2 flex items-center justify-center">
+          {% if p.image_url %}<img src="{{ p.image_url }}" class="w-full h-full object-cover" alt="{{ p.name }}"/>
+          {% else %}<i class="fas fa-box text-white/60 text-3xl"></i>{% endif %}
+        </div>
+        <p class="text-xs font-semibold text-white truncate">{{ p.name }}</p>
+        <p class="text-xs text-orange-300 font-bold">₹{{ p.price }}</p>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Stats Bar -->
+{% if not query and not category_slug %}
+<div class="bg-white border-b border-gray-100 shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex justify-around text-center gap-4 overflow-x-auto">
+    <div class="flex items-center gap-2 text-sm whitespace-nowrap">
+      <i class="fas fa-truck text-indigo-500"></i><span class="text-gray-600">Free shipping over ₹499</span>
+    </div>
+    <div class="flex items-center gap-2 text-sm whitespace-nowrap">
+      <i class="fas fa-shield-alt text-green-500"></i><span class="text-gray-600">Secure checkout</span>
+    </div>
+    <div class="flex items-center gap-2 text-sm whitespace-nowrap">
+      <i class="fas fa-undo text-orange-500"></i><span class="text-gray-600">30-day returns</span>
+    </div>
+    <div class="flex items-center gap-2 text-sm whitespace-nowrap">
+      <i class="fas fa-headset text-purple-500"></i><span class="text-gray-600">24/7 support</span>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+
+  <!-- Mobile search -->
+  <form method="GET" action="/" class="md:hidden mb-6">
+    <div class="relative">
+      <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Search products..."
+             class="w-full pl-11 pr-4 py-3 rounded-2xl border border-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 shadow-sm"/>
+      <i class="fas fa-search absolute left-4 top-3.5 text-indigo-400"></i>
+    </div>
+  </form>
+
+  <!-- Category Pills -->
+  {% if categories %}
+  <div class="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-hide">
+    <a href="/"
+       class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all {% if not category_slug %}bg-indigo-600 text-white shadow-md{% else %}bg-white text-gray-600 border hover:border-indigo-300 hover:text-indigo-600{% endif %}">
+      All Products
+    </a>
+    {% for cat in categories %}
+    <a href="/?category={{ cat.slug }}{% if query %}&q={{ query }}{% endif %}"
+       class="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all {% if category_slug == cat.slug %}bg-indigo-600 text-white shadow-md{% else %}bg-white text-gray-600 border hover:border-indigo-300 hover:text-indigo-600{% endif %}">
+      <span>{{ cat.icon }}</span> {{ cat.name }}
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Toolbar -->
+  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
+    <div>
+      {% if query %}<h2 class="text-lg font-semibold text-gray-800">Results for "<span class="text-indigo-600">{{ query }}</span>"</h2>
+      {% elif category_slug %}<h2 class="text-lg font-semibold text-gray-800">{{ category_slug|title }}</h2>
+      {% else %}<h2 class="text-lg font-semibold text-gray-800" id="products">All Products</h2>{% endif %}
+      <p class="text-sm text-gray-500">{{ products|length }} product{{ products|length|pluralize }}</p>
+    </div>
+    <form method="GET" class="flex items-center gap-2">
+      {% if query %}<input type="hidden" name="q" value="{{ query }}"/>{% endif %}
+      {% if category_slug %}<input type="hidden" name="category" value="{{ category_slug }}"/>{% endif %}
+      <label class="text-sm text-gray-600">Sort:</label>
+      <select name="sort" onchange="this.form.submit()"
+              class="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white shadow-sm">
+        <option value="" {% if not sort %}selected{% endif %}>Default</option>
+        <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+        <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+        <option value="rating" {% if sort == 'rating' %}selected{% endif %}>Top Rated</option>
+        <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest</option>
+      </select>
+    </form>
+  </div>
+
+  <!-- Products Grid -->
+  {% if products %}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    {% for p in products %}
+    <div class="product-card bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 animate-fade-in">
+      <!-- Image -->
+      <a href="/product/{{ p.pk }}/" class="block relative overflow-hidden bg-gray-50 h-52">
+        {% if p.image_url %}
+        <img src="{{ p.image_url }}" alt="{{ p.name }}" class="product-img w-full h-full object-cover"/>
+        {% else %}
+        <div class="product-img w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50">
+          <i class="fas fa-box text-indigo-200 text-5xl"></i>
+        </div>
+        {% endif %}
+        <!-- Badges -->
+        <div class="absolute top-2 left-2 flex flex-col gap-1">
+          {% if p.discount_percent %}<span class="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">-{{ p.discount_percent }}%</span>{% endif %}
+          {% if p.is_featured %}<span class="bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">⭐ Featured</span>{% endif %}
+          {% if not p.in_stock %}<span class="bg-gray-700 text-white text-xs font-bold px-2 py-0.5 rounded-full">Out of Stock</span>{% endif %}
+        </div>
+      </a>
+
+      <!-- Info -->
+      <div class="p-4">
+        {% if p.category %}
+        <span class="text-xs text-indigo-500 font-medium uppercase tracking-wide">{{ p.category.icon }} {{ p.category.name }}</span>
+        {% endif %}
+        <a href="/product/{{ p.pk }}/">
+          <h3 class="font-semibold text-gray-800 mt-1 mb-1 line-clamp-2 hover:text-indigo-600 transition-colors leading-snug">{{ p.name }}</h3>
+        </a>
+        <p class="text-xs text-gray-500 line-clamp-2 mb-3">{{ p.description }}</p>
+
+        <!-- Rating -->
+        <div class="flex items-center gap-1.5 mb-3">
+          <div class="flex text-xs">
+            {% for i in "12345" %}
+              {% if p.rating >= forloop.counter %}<i class="fas fa-star star-filled"></i>
+              {% else %}<i class="fas fa-star star-empty"></i>{% endif %}
+            {% endfor %}
+          </div>
+          <span class="text-xs text-gray-500">({{ p.review_count }})</span>
+        </div>
+
+        <!-- Price & Button -->
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-xl font-bold text-gray-900">₹{{ p.price }}</span>
+            {% if p.original_price %}<span class="text-sm text-gray-400 line-through ml-1">₹{{ p.original_price }}</span>{% endif %}
+          </div>
+          {% if p.in_stock %}
+          <button onclick="addToCart({{ p.pk }}, this)"
+                  class="btn-primary text-white text-xs px-3 py-2 rounded-xl font-medium flex items-center gap-1 shadow-sm">
+            <i class="fas fa-cart-plus"></i> Add
+          </button>
+          {% else %}
+          <span class="text-xs text-gray-400 font-medium">Unavailable</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <!-- Empty State -->
+  <div class="text-center py-20 animate-fade-in">
+    <div class="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-6">
+      <i class="fas fa-search text-indigo-300 text-4xl"></i>
+    </div>
+    <h3 class="text-xl font-semibold text-gray-700 mb-2">No products found</h3>
+    <p class="text-gray-400 mb-6">{% if query %}No results for "{{ query }}". Try different keywords.{% else %}No products yet. Add some from the admin panel!{% endif %}</p>
+    <a href="/" class="btn-primary text-white px-6 py-3 rounded-2xl font-medium inline-flex items-center gap-2 shadow-md">
+      <i class="fas fa-home"></i> Back to Home
+    </a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

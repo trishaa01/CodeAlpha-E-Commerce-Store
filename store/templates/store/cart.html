@@ -1,0 +1,147 @@
+{% extends 'store/base.html' %}
+{% block title %}Your Cart — ShopNova{% endblock %}
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-8">
+
+  <div class="flex items-center gap-3 mb-8">
+    <div class="w-10 h-10 btn-primary rounded-2xl flex items-center justify-center shadow-md">
+      <i class="fas fa-shopping-bag text-white"></i>
+    </div>
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">Your Cart</h1>
+      <p class="text-sm text-gray-500">{{ cart_items|length }} item{{ cart_items|length|pluralize }}</p>
+    </div>
+  </div>
+
+  {% if cart_items %}
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Cart Items -->
+    <div class="lg:col-span-2 space-y-3" id="cart-items">
+      {% for item in cart_items %}
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-start gap-4 hover:shadow-md transition-shadow" id="cart-item-{{ item.product.pk }}">
+        <!-- Image -->
+        <a href="/product/{{ item.product.pk }}/" class="flex-shrink-0 w-20 h-20 bg-gray-50 rounded-xl overflow-hidden">
+          {% if item.product.image_url %}<img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" class="w-full h-full object-cover"/>
+          {% else %}<div class="w-full h-full flex items-center justify-center bg-indigo-50"><i class="fas fa-box text-indigo-200 text-2xl"></i></div>{% endif %}
+        </a>
+        <!-- Info -->
+        <div class="flex-1 min-w-0">
+          <a href="/product/{{ item.product.pk }}/">
+            <h3 class="font-semibold text-gray-800 hover:text-indigo-600 transition-colors line-clamp-2">{{ item.product.name }}</h3>
+          </a>
+          {% if item.product.category %}<p class="text-xs text-indigo-500 mt-0.5">{{ item.product.category.name }}</p>{% endif %}
+          <p class="text-lg font-bold text-gray-900 mt-1">₹{{ item.product.price }}</p>
+        </div>
+        <!-- Qty + Remove -->
+        <div class="flex flex-col items-end gap-3">
+          <button onclick="removeItem({{ item.product.pk }})" class="text-gray-300 hover:text-red-400 transition-colors text-sm">
+            <i class="fas fa-times"></i>
+          </button>
+          <div class="flex items-center border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+            <button onclick="changeQty({{ item.product.pk }}, {{ item.qty }}, -1)" class="w-8 h-8 bg-gray-50 hover:bg-indigo-50 text-gray-600 hover:text-indigo-600 transition-colors text-sm font-bold">−</button>
+            <span class="w-10 text-center text-sm font-semibold" id="qty-{{ item.product.pk }}">{{ item.qty }}</span>
+            <button onclick="changeQty({{ item.product.pk }}, {{ item.qty }}, 1)" class="w-8 h-8 bg-gray-50 hover:bg-indigo-50 text-gray-600 hover:text-indigo-600 transition-colors text-sm font-bold">+</button>
+          </div>
+          <span class="text-sm font-bold text-gray-700" id="subtotal-{{ item.product.pk }}">₹{{ item.subtotal }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Order Summary -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sticky top-20">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Order Summary</h2>
+        <div class="space-y-3 mb-4">
+          <div class="flex justify-between text-sm text-gray-600">
+            <span>Subtotal</span>
+            <span id="order-total">₹{{ total }}</span>
+          </div>
+          <div class="flex justify-between text-sm text-gray-600">
+            <span>Shipping</span>
+            <span class="text-green-600 font-medium">{% if total >= 499 %}FREE{% else %}₹49{% endif %}</span>
+          </div>
+          <div class="border-t border-gray-100 pt-3 flex justify-between font-bold text-gray-900">
+            <span>Total</span>
+            <span id="final-total">₹{% if total >= 499 %}{{ total }}{% else %}{{ total|floatformat:2 }}{% endif %}</span>
+          </div>
+        </div>
+        {% if total < 499 %}
+        <div class="bg-orange-50 border border-orange-200 rounded-xl p-3 mb-4 text-xs text-orange-700">
+          <i class="fas fa-truck mr-1"></i> Add ₹{{ 499|floatformat:0 }} more for free shipping!
+        </div>
+        {% else %}
+        <div class="bg-green-50 border border-green-200 rounded-xl p-3 mb-4 text-xs text-green-700">
+          <i class="fas fa-check mr-1"></i> You qualify for free shipping!
+        </div>
+        {% endif %}
+        <button class="btn-primary w-full text-white py-4 rounded-2xl font-bold text-base shadow-lg flex items-center justify-center gap-2">
+          <i class="fas fa-lock text-sm"></i> Proceed to Checkout
+        </button>
+        <a href="/" class="block text-center mt-3 text-sm text-indigo-600 hover:text-indigo-800 transition-colors">
+          <i class="fas fa-arrow-left mr-1"></i> Continue Shopping
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <!-- Empty Cart -->
+  <div class="text-center py-20 animate-fade-in">
+    <div class="w-28 h-28 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-6">
+      <i class="fas fa-shopping-cart text-indigo-200 text-5xl"></i>
+    </div>
+    <h2 class="text-2xl font-bold text-gray-700 mb-2">Your cart is empty</h2>
+    <p class="text-gray-400 mb-8">Looks like you haven't added anything yet.</p>
+    <a href="/" class="btn-primary text-white px-8 py-4 rounded-2xl font-semibold text-lg inline-flex items-center gap-2 shadow-lg">
+      <i class="fas fa-store"></i> Start Shopping
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function getCookie(name) {
+  let v = null;
+  document.cookie.split(';').forEach(c => {
+    if (c.trim().startsWith(name+'=')) v = decodeURIComponent(c.trim().slice(name.length+1));
+  });
+  return v;
+}
+
+function removeItem(pk) {
+  fetch(`/cart/remove/${pk}/`, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': getCookie('csrftoken') }
+  }).then(r => r.json()).then(data => {
+    if (data.success) {
+      const el = document.getElementById(`cart-item-${pk}`);
+      el.style.opacity = '0';
+      el.style.transform = 'translateX(20px)';
+      el.style.transition = 'all 0.3s ease';
+      setTimeout(() => { el.remove(); updateCartBadge(data.cart_count); location.reload(); }, 300);
+    }
+  });
+}
+
+function changeQty(pk, current, delta) {
+  const newQty = Math.max(0, current + delta);
+  fetch(`/cart/update/${pk}/`, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ qty: newQty })
+  }).then(r => r.json()).then(data => {
+    if (data.success) {
+      updateCartBadge(data.cart_count);
+      if (newQty === 0) { location.reload(); return; }
+      document.getElementById(`qty-${pk}`).textContent = newQty;
+      document.getElementById(`order-total`).textContent = `₹${data.total.toFixed(2)}`;
+      document.getElementById(`final-total`).textContent = `₹${data.total.toFixed(2)}`;
+    }
+  });
+}
+</script>
+{% endblock %}
