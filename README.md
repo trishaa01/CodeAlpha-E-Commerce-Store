@@ -96,7 +96,7 @@ CodeAlpha-E-Commerce-Store/
 
 ## 👩‍💻 Author
 
-**Trisha** — CodeAlpha Internship Task 1
+**Trisha**
 
 [![GitHub](https://img.shields.io/badge/GitHub-trishaa01-black?style=flat&logo=github)](https://github.com/trishaa01)
 
