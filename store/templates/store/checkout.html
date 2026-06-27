@@ -1,0 +1,159 @@
+{% extends 'store/base.html' %}
+{% block title %}Checkout — ShopNova{% endblock %}
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-8">
+
+  <div class="flex items-center gap-3 mb-8">
+    <div class="w-10 h-10 btn-primary rounded-2xl flex items-center justify-center shadow-md">
+      <i class="fas fa-lock text-white"></i>
+    </div>
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">Checkout</h1>
+      <p class="text-sm text-gray-500">Complete your order</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Checkout Form -->
+    <div class="lg:col-span-2">
+      <form method="POST" action="/checkout/">
+        {% csrf_token %}
+
+        <!-- Personal Info -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-4">
+          <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <i class="fas fa-user text-indigo-500"></i> Personal Information
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="text-sm font-medium text-gray-700 mb-1 block">Full Name</label>
+              <input type="text" name="full_name" required placeholder="Trisha Sharma"
+                     class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 text-sm"/>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-gray-700 mb-1 block">Email Address</label>
+              <input type="email" name="email" required placeholder="trisha@email.com"
+                     class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 text-sm"/>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-gray-700 mb-1 block">Phone Number</label>
+              <input type="tel" name="phone" required placeholder="+91 98765 43210"
+                     class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 text-sm"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Delivery Address -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-4">
+          <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <i class="fas fa-map-marker-alt text-indigo-500"></i> Delivery Address
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="sm:col-span-2">
+              <label class="text-sm font-medium text-gray-700 mb-1 block">Street Address</label>
+              <input type="text" name="address" required placeholder="123, Main Street, Near Park"
+                     class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 text-sm"/>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-gray-700 mb-1 block">City</label>
+              <input type="text" name="city" required placeholder="New Delhi"
+                     class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 text-sm"/>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-gray-700 mb-1 block">State</label>
+              <input type="text" name="state" required placeholder="Delhi"
+                     class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 text-sm"/>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-gray-700 mb-1 block">PIN Code</label>
+              <input type="text" name="pincode" required placeholder="110001"
+                     class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 text-sm"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
+          <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <i class="fas fa-credit-card text-indigo-500"></i> Payment Method
+          </h2>
+          <div class="space-y-3">
+            <label class="flex items-center gap-3 p-4 border-2 border-indigo-200 rounded-xl cursor-pointer bg-indigo-50">
+              <input type="radio" name="payment" value="cod" checked class="text-indigo-600"/>
+              <i class="fas fa-money-bill-wave text-green-500 text-xl"></i>
+              <div>
+                <p class="font-semibold text-gray-800 text-sm">Cash on Delivery</p>
+                <p class="text-xs text-gray-500">Pay when your order arrives</p>
+              </div>
+            </label>
+            <label class="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-indigo-200 transition-colors">
+              <input type="radio" name="payment" value="upi" class="text-indigo-600"/>
+              <i class="fas fa-mobile-alt text-indigo-500 text-xl"></i>
+              <div>
+                <p class="font-semibold text-gray-800 text-sm">UPI Payment</p>
+                <p class="text-xs text-gray-500">GPay, PhonePe, Paytm</p>
+              </div>
+            </label>
+            <label class="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-indigo-200 transition-colors">
+              <input type="radio" name="payment" value="card" class="text-indigo-600"/>
+              <i class="fas fa-credit-card text-blue-500 text-xl"></i>
+              <div>
+                <p class="font-semibold text-gray-800 text-sm">Credit / Debit Card</p>
+                <p class="text-xs text-gray-500">Visa, Mastercard, RuPay</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit"
+                class="btn-primary w-full text-white py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 shadow-lg">
+          <i class="fas fa-check-circle"></i> Place Order
+        </button>
+      </form>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sticky top-20">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Order Summary</h2>
+        <div class="space-y-3 mb-4">
+          {% for item in cart_items %}
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-50 flex-shrink-0">
+              {% if item.product.image_url %}
+              <img src="{{ item.product.image_url }}" class="w-full h-full object-cover"/>
+              {% else %}
+              <div class="w-full h-full flex items-center justify-center bg-indigo-50">
+                <i class="fas fa-box text-indigo-200"></i>
+              </div>
+              {% endif %}
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-800 truncate">{{ item.product.name }}</p>
+              <p class="text-xs text-gray-500">Qty: {{ item.qty }}</p>
+            </div>
+            <span class="text-sm font-bold text-gray-900">₹{{ item.subtotal }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="border-t border-gray-100 pt-4 space-y-2">
+          <div class="flex justify-between text-sm text-gray-600">
+            <span>Subtotal</span>
+            <span>₹{{ total }}</span>
+          </div>
+          <div class="flex justify-between text-sm text-gray-600">
+            <span>Shipping</span>
+            <span class="text-green-600 font-medium">{% if total >= 499 %}FREE{% else %}₹49{% endif %}</span>
+          </div>
+          <div class="flex justify-between font-bold text-gray-900 pt-2 border-t border-gray-100">
+            <span>Total</span>
+            <span>₹{{ total }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

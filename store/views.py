@@ -109,3 +109,37 @@ def update_cart(request, pk):
         except:
             pass
     return JsonResponse({'success': True, 'cart_count': cart_count, 'total': total})
+
+def checkout(request):
+    cart = request.session.get('cart', {})
+    if not cart:
+        return redirect('home')
+    
+    cart_items = []
+    total = 0
+    for pk, qty in cart.items():
+        try:
+            product = Product.objects.get(pk=int(pk))
+            subtotal = product.price * qty
+            total += subtotal
+            cart_items.append({'product': product, 'qty': qty, 'subtotal': subtotal})
+        except Product.DoesNotExist:
+            pass
+
+    if request.method == 'POST':
+        # Clear cart after order
+        request.session['cart'] = {}
+        return redirect('order_success')
+
+    cart_count = sum(cart.values())
+    return render(request, 'store/checkout.html', {
+        'cart_items': cart_items,
+        'total': total,
+        'cart_count': cart_count,
+    })
+
+def order_success(request):
+    cart_count = 0
+    return render(request, 'store/order_success.html', {
+        'cart_count': cart_count,
+    })
